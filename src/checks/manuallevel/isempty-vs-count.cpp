@@ -61,5 +61,14 @@ void IsEmptyVSCount::VisitStmt(clang::Stmt *stmt)
         return;
     }
 
+    if (clazy::classIsOneOf(method->getParent(), {"QMultiHash", "QMultiMap"}) && memberCall->getNumArgs() > 0) {
+        return;
+    }
+
+    if (clazy::classIsOneOf(method->getParent(), {"QHash", "QMap"}) && memberCall->getNumArgs() > 0) {
+        emitWarning(clazy::getLocStart(stmt), "use contains() instead");
+        return;
+    }
+
     emitWarning(clazy::getLocStart(stmt), "use isEmpty() instead");
 }
